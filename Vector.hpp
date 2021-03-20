@@ -5,12 +5,14 @@ class Vector {
   public:
     Vector(size_t n) : data_size(n) {
         data = new float[n];
+        for (int i = 0; i < n; ++i) {
+            data[i] = 0;
+        }
     }
 
     Vector(size_t n, float number) {
         data_size = n;
         data = new float[n];
-
         for (int i = 0; i < n; ++i) {
             data[i] = number;
         }
@@ -19,7 +21,6 @@ class Vector {
     Vector(std::initializer_list<float> numbers) {
         data_size = numbers.size();
         data = new float[data_size];
-
         int i = 0;
         for (auto num: numbers) {
             data[i++] = num;
@@ -43,8 +44,6 @@ class Vector {
     }
 
     Vector &operator=(const Vector &other) {
-        check_sizes(other);
-
         delete[] data;
 
         data_size = other.size();
@@ -113,6 +112,17 @@ class Vector {
         return scalar_product;
     }
 
+    static Vector cross_product(const Vector &lhs, const Vector &rhs) {
+        if (lhs.size() != 3 || rhs.size() != 3) {
+            throw std::runtime_error("Can't calculate the cross product. Dimension is not three");
+        }
+
+        return Vector{lhs.data[1] * rhs.data[2] - lhs.data[2] * rhs.data[1],
+                      lhs.data[2] * rhs.data[0] - lhs.data[0] * rhs.data[2],
+                      lhs.data[0] * rhs.data[1] - lhs.data[1] * rhs.data[0]
+        };
+    }
+
     Vector operator*(float other) const {
         auto *new_data = new float[size()];
         for (int i = 0; i < size(); ++i) {
@@ -155,19 +165,18 @@ class Vector {
         return *this;
     }
 
-    Vector cross_product(const Vector &lhs, const Vector &rhs) {
-        data_size = lhs.size();
-        if (data_size != 3) {
-            throw std::runtime_error("Can't calculate the cross product. Dimension is not three");
+    bool operator==(const Vector &other) const {
+        check_sizes(other);
+
+        for (int i = 0; i < size(); ++i) {
+            if (data[i] != other.data[i]) return false;
         }
 
-        data = new float[data_size];
-        check_sizes(rhs);
+        return true;
+    }
 
-        return Vector{lhs.data[1] * rhs.data[2] - lhs.data[2] * rhs.data[1],
-                      lhs.data[2] * rhs.data[0] - lhs.data[0] * rhs.data[2],
-                      lhs.data[0] * rhs.data[1] - lhs.data[1] * rhs.data[0]
-        };
+    bool operator!=(const Vector &other) const {
+        return !(*this == other);
     }
 
     float length() const {
@@ -189,21 +198,9 @@ class Vector {
         return Vector(size(), new_data);
     }
 
-    bool operator==(const Vector &other) const {
-        check_sizes(other);
-
-        for (int i = 0; i < size(); ++i) {
-            if (data[i] != other.data[i]) return false;
-        }
-
-        return true;
-    }
-
-    bool operator!=(const Vector &other) const {
-        return !(*this == other);
-    }
-
     friend std::ostream &operator<<(std::ostream &os, const Vector &vector) {
+        std::cout << std::setprecision(4) << std::fixed;
+
         os << "Vector[size=" << vector.size() << "]: [";
         for (int i = 0; i < vector.size(); ++i) {
             os << vector[i] << (i == vector.size() - 1 ? "]" : ", ");
