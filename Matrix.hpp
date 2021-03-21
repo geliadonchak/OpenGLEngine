@@ -4,7 +4,7 @@
 #include "Vector.hpp"
 
 class Matrix {
-  public:
+public:
     Matrix(size_t n) : data_size(n) {
         data = reinterpret_cast<Vector *>(new char[sizeof(Vector) * n]);
         for (int i = 0; i < n; ++i) {
@@ -211,8 +211,6 @@ class Matrix {
     }
 
     Matrix operator*(float other) const {
-        check_sizes(other);
-
         Matrix new_data(size());
         for (int row = 0; row < size(); ++row) {
             new_data[row] = Vector(size());
@@ -228,8 +226,6 @@ class Matrix {
     }
 
     Matrix &operator*=(float other) {
-        check_sizes(other);
-
         for (int i = 0; i < size(); ++i) {
             for (int j = 0; j < size(); ++j) {
                 data[i][j] *= other;
@@ -299,8 +295,6 @@ class Matrix {
     }
 
     Matrix operator/(float other) const {
-        check_sizes(other);
-
         Matrix new_data(size());
         for (int row = 0; row < size(); ++row) {
             new_data[row] = Vector(size());
@@ -316,8 +310,6 @@ class Matrix {
     }
 
     Matrix &operator/=(float other) {
-        check_sizes(other);
-
         for (int i = 0; i < size(); ++i) {
             for (int j = 0; j < size(); ++j) {
                 data[i][j] /= other;
@@ -365,9 +357,49 @@ class Matrix {
         return *this;
     }
 
+    float determinant() const {
+        return find_determinant(*this, size());
+    }
+
+    Matrix adjugate() const {
+        Matrix adjugate(size());
+
+        for (int i = 0; i < size(); ++i) {
+            for (int j = 0; j < size(); ++j) {
+                Matrix Mat_ij(size() - 1);
+
+                int idx = 0;
+                for (int k = 0; k < size(); ++k) {
+                    for (int l = 0; l < size(); ++l) {
+                        if (k == i || l == j) {
+                            continue;
+                        }
+                        Mat_ij[idx / (size() - 1)][idx % (size() - 1)] = data[k][l];
+                        idx++;
+                    }
+                }
+
+                adjugate[i][j] = Mat_ij.determinant() * std::pow(-1, i + j + 2);
+            }
+        }
+
+        return adjugate;
+    }
+
+    Matrix inverse() {
+        float det = this->determinant();
+        if (det == 0) {
+            throw std::runtime_error("Can't calculate inverse matrix. Matrix is degenerate");
+        }
+
+        Matrix new_matrix = this->adjugate().transposed();
+
+        return new_matrix * (1 / det);
+    }
+
     static Matrix transform(const Vector &other) {
         if (other.size() != 3) {
-            throw std::runtime_error("Can't make transform matrix. Vector dimension is not three");
+            throw std::runtime_error("Can't make matrix. Vector dimension is not three");
         }
 
         Matrix matrix = identity_matrix(4);
@@ -380,7 +412,7 @@ class Matrix {
 
     static Matrix scale(const Vector &other) {
         if (other.size() != 3) {
-            throw std::runtime_error("Can't make transform matrix. Vector dimension is not three");
+            throw std::runtime_error("Can't make matrix. Vector dimension is not three");
         }
 
         Matrix matrix(4);
@@ -415,26 +447,26 @@ class Matrix {
         return x_matrix * y_matrix * z_matrix;
     }
 
-//    static Matrix look_at(const Vector &from, const Vector &to, const Vector &world_up) {
-//        if (from.size() != 3 || to.size() != 3 || world_up.size() != 3) {
-//            throw std::runtime_error("Can't make 'look_at' matrix. Vectors dimensions are not three");
-//        }
-//
-//        Vector forward = (from - to).normalize();
-//        world_up.normalize();
-//        Vector right = Vector::cross_product(world_up, forward).normalize();
-//        Vector up = Vector::cross_product(forward, right).normalize();
-//
-//        Matrix matrix = identity_matrix(4);
-//        for (int i = 0; i < 3; ++i) {
-//            matrix[0][i] = right[i];
-//            matrix[1][i] = up[i];
-//            matrix[2][i] = forward[i];
-//            matrix[3][i] = from[i];
-//        }
-//
-//        return matrix;
-//    }
+    static Matrix look_at(const Vector &from, const Vector &to, const Vector &world_up) {
+        if (from.size() != 3 || to.size() != 3 || world_up.size() != 3) {
+            throw std::runtime_error("Can't make 'look_at' matrix. Vectors dimensions are not three");
+        }
+
+        Vector forward = (from - to).normalize();
+        world_up.normalize();
+        Vector right = Vector::cross_product(world_up, forward).normalize();
+        Vector up = Vector::cross_product(forward, right).normalize();
+
+        Matrix matrix = identity_matrix(4);
+        for (int i = 0; i < 3; ++i) {
+            matrix[0][i] = right[i];
+            matrix[1][i] = up[i];
+            matrix[2][i] = forward[i];
+            matrix[3][i] = from[i];
+        }
+
+        return matrix;
+    }
 
     static Matrix perspective(const float &fov, const float &ratio, const float &near, const float &far) {
         Matrix matrix(4);
@@ -444,6 +476,19 @@ class Matrix {
         matrix[2][2] = (-near - far) / (near - far);
         matrix[2][3] = (2 * far * near) / (near - far);
         matrix[3][2] = 1;
+
+        return matrix;
+    }
+
+    static Matrix ortho(const float &right, const float &left, const float &top, const float &bottom, const float &near, const float &far) {
+        Matrix matrix = identity_matrix(4);
+
+        matrix[0][0] = 1 / (right - left);
+        matrix[0][3] = - (right + left) / (right - left);
+        matrix[1][1] = 2 / (top - bottom);
+        matrix[1][3] = - (top + bottom) / (top - bottom);
+        matrix[2][2] = -2 / (far - near);
+        matrix[2][3] = - (far + near) / (far - near);
 
         return matrix;
     }
@@ -463,10 +508,6 @@ class Matrix {
             }
         }
         return os;
-    }
-
-    Vector *get_data() {
-        return data;
     }
 
     Vector get_row(size_t n) const {
@@ -491,7 +532,7 @@ class Matrix {
         delete data;
     }
 
-  private:
+private:
     Vector *data;
     size_t data_size;
 
@@ -500,8 +541,33 @@ class Matrix {
             throw std::runtime_error("Matrix sizes are not equal");
         }
     }
-};
 
-// Inverse (сделать)
-// LookAt (узнать про четвертую колнку)
-// Ortho (узнать, что это)
+    float find_determinant(const Matrix &mat, size_t n) const {
+        if (n == 1) {
+            return mat[0][0];
+        }
+
+        if (n == 2) {
+            return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
+        }
+
+        int determinant = 0;
+        for (int i = 0; i < n; i++) {
+            Matrix temp(n - 1);
+            for (int j = 1; j < n; j++) {
+                int idx = 0;
+                for (int k = 0; k < n; k++) {
+                    if (k == i) {
+                        continue;
+                    }
+
+                    temp[j - 1][idx++] = mat[j][k];
+                }
+            }
+
+            determinant += pow(-1, i + 2) * mat[0][i] * find_determinant(temp, n - 1);
+        }
+
+        return determinant;
+    }
+};

@@ -44,7 +44,9 @@ class Vector {
     }
 
     Vector &operator=(const Vector &other) {
-        delete[] data;
+        if (this == &other) {
+            return *this;
+        }
 
         data_size = other.size();
         data = new float[data_size];
@@ -166,7 +168,9 @@ class Vector {
     }
 
     bool operator==(const Vector &other) const {
-        check_sizes(other);
+        if (size() != other.size()) {
+            return false;
+        }
 
         for (int i = 0; i < size(); ++i) {
             if (data[i] != other.data[i]) return false;
@@ -190,6 +194,10 @@ class Vector {
     }
 
     Vector normalize() const {
+        if (length() == 0) {
+            throw std::runtime_error("Can't normalize zero vector");
+        }
+
         auto *new_data = new float[size()];
         for (int i = 0; i < size(); ++i) {
             new_data[i] = data[i] / length();
@@ -206,10 +214,6 @@ class Vector {
             os << vector[i] << (i == vector.size() - 1 ? "]" : ", ");
         }
         return os;
-    }
-
-    float *get_data() {
-        return data;
     }
 
     size_t size() const {
