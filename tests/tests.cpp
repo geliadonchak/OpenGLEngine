@@ -2,8 +2,8 @@
 
 #define EPS 10e-8
 
-#include "external/catch.hpp"
-#include "Matrix.hpp"
+#include "../external/catch.hpp"
+#include "../Matrix.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
