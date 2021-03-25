@@ -1,3 +1,5 @@
+#pragma ones
+
 #include <cmath>
 #include <ostream>
 

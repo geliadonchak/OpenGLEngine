@@ -13,7 +13,7 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(SFML COMPONENTS system window network graphics audio REQUIRED)
 
-add_executable(OpenGLEngineTests tests/VectorTests.cpp Vector.hpp Matrix.hpp)
+add_executable(OpenGLEngineTests tests/tests.cpp)
 
 include_directories(${OPENGL_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS} ${SFML_DIR})
 

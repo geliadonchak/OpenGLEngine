@@ -1,3 +1,5 @@
+#pragma ones
+
 #include <cmath>
 #include <iostream>
 #include <iomanip>
@@ -12,7 +14,7 @@ public:
         }
     }
 
-    Matrix(size_t n, float number) {
+    Matrix(size_t n, float number): data_size(n) {
         data = reinterpret_cast<Vector *>(new char[sizeof(Vector) * n]);
         for (int i = 0; i < n; ++i) {
             data[i] = Vector(n, number);
@@ -39,18 +41,11 @@ public:
         }
     }
 
-    Matrix(size_t n, float **numbers) {
-        data_size = n;
+    Matrix(size_t n, float **numbers) : data_size(n) {
         data = reinterpret_cast<Vector *>(new char[sizeof(Vector) * data_size]);
 
         for (int row = 0; row < data_size; ++row) {
-            data[row] = Vector(data_size);
-        }
-
-        for (int i = 0; i < data_size; ++i) {
-            for (int j = 0; j < data_size; ++j) {
-                data[i][j] = numbers[i][j];
-            }
+            data[row] = Vector(data_size, numbers[row]);
         }
     }
 
@@ -70,10 +65,6 @@ public:
     }
 
     Matrix &operator=(const Matrix &other) {
-        check_sizes(other);
-
-        delete[] data;
-
         data_size = other.size();
         data = reinterpret_cast<Vector *>(new char[sizeof(Vector) * data_size]);
 
@@ -124,8 +115,6 @@ public:
     }
 
     Matrix operator+(float other) const {
-        check_sizes(other);
-
         Matrix new_data(size());
         for (int row = 0; row < size(); ++row) {
             new_data[row] = Vector(size());
@@ -141,8 +130,6 @@ public:
     }
 
     Matrix &operator+=(float other) {
-        check_sizes(other);
-
         for (int i = 0; i < size(); ++i) {
             for (int j = 0; j < size(); ++j) {
                 data[i][j] += other;
@@ -182,8 +169,6 @@ public:
     }
 
     Matrix operator-(float other) const {
-        check_sizes(other);
-
         Matrix new_data(size());
         for (int row = 0; row < size(); ++row) {
             new_data[row] = Vector(size());
@@ -199,8 +184,6 @@ public:
     }
 
     Matrix &operator-=(float other) {
-        check_sizes(other);
-
         for (int i = 0; i < size(); ++i) {
             for (int j = 0; j < size(); ++j) {
                 data[i][j] -= other;
@@ -241,7 +224,7 @@ public:
         Matrix new_data(size());
 
         for (int i = 0; i < size(); ++i) {
-            Vector row = data[i];
+            Vector row = this->get_row(i);
             for (int j = 0; j < size(); ++j) {
                 Vector col = other.get_col(j);
                 for (int k = 0; k < size(); ++k) {
@@ -295,6 +278,10 @@ public:
     }
 
     Matrix operator/(float other) const {
+        if (other == 0) {
+            throw std::runtime_error("Division by zero");
+        }
+
         Matrix new_data(size());
         for (int row = 0; row < size(); ++row) {
             new_data[row] = Vector(size());
@@ -310,6 +297,10 @@ public:
     }
 
     Matrix &operator/=(float other) {
+        if (other == 0) {
+            throw std::runtime_error("Division by zero");
+        }
+
         for (int i = 0; i < size(); ++i) {
             for (int j = 0; j < size(); ++j) {
                 data[i][j] /= other;
@@ -320,7 +311,9 @@ public:
     }
 
     bool operator==(const Matrix &other) const {
-        check_sizes(other);
+        if (size() != other.size()) {
+            return false;
+        }
 
         for (int i = 0; i < size(); ++i) {
             for (int j = 0; j < size(); ++j) {
@@ -424,7 +417,9 @@ public:
         return matrix;
     }
 
-    static Matrix rotation(const float &alpha, const float &beta, const float &gamma) {
+
+
+    static Matrix rotate(const float &alpha, const float &beta, const float &gamma) {
         Matrix x_matrix = identity_matrix(4);
         Matrix y_matrix = identity_matrix(4);
         Matrix z_matrix = identity_matrix(4);
@@ -448,10 +443,6 @@ public:
     }
 
     static Matrix look_at(const Vector &from, const Vector &to, const Vector &world_up) {
-        if (from.size() != 3 || to.size() != 3 || world_up.size() != 3) {
-            throw std::runtime_error("Can't make 'look_at' matrix. Vectors dimensions are not three");
-        }
-
         Vector forward = (from - to).normalize();
         world_up.normalize();
         Vector right = Vector::cross_product(world_up, forward).normalize();
@@ -468,14 +459,16 @@ public:
         return matrix;
     }
 
+
+
     static Matrix perspective(const float &fov, const float &ratio, const float &near, const float &far) {
         Matrix matrix(4);
 
         matrix[0][0] = 1 / (ratio * tan(fov / 2));
         matrix[1][1] = 1 / tan(fov / 2);
-        matrix[2][2] = (-near - far) / (near - far);
-        matrix[2][3] = (2 * far * near) / (near - far);
-        matrix[3][2] = 1;
+        matrix[2][2] = (near + far) / (near - far);
+        matrix[2][3] = -1;
+        matrix[3][2] = (2 * far * near) / (near - far);
 
         return matrix;
     }
@@ -483,10 +476,10 @@ public:
     static Matrix ortho(const float &right, const float &left, const float &top, const float &bottom, const float &near, const float &far) {
         Matrix matrix = identity_matrix(4);
 
-        matrix[0][0] = 1 / (right - left);
-        matrix[0][3] = - (right + left) / (right - left);
-        matrix[1][1] = 2 / (top - bottom);
-        matrix[1][3] = - (top + bottom) / (top - bottom);
+        matrix[0][0] = -2 / (right - left);
+        matrix[0][3] = (right + left) / (right - left);
+        matrix[1][1] = -2 / (top - bottom);
+        matrix[1][3] = (top + bottom) / (top - bottom);
         matrix[2][2] = -2 / (far - near);
         matrix[2][3] = - (far + near) / (far - near);
 
@@ -551,7 +544,7 @@ private:
             return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
         }
 
-        int determinant = 0;
+        float determinant = 0;
         for (int i = 0; i < n; i++) {
             Matrix temp(n - 1);
             for (int j = 1; j < n; j++) {
