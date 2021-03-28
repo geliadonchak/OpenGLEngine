@@ -3,7 +3,6 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <SFML/Window.hpp>
-#include <SFML/Graphics.hpp>
 
 #include "external/stb/stb_image.h"
 #include "utils/shaderLoader.hpp"
@@ -11,14 +10,14 @@
 #include "utils/Shader.hpp"
 
 int main() {
-    sf::ContextSettings settings;
-    settings.depthBits = 24;
-    settings.stencilBits = 8;
-    settings.majorVersion = 4;
-    settings.minorVersion = 3;
-    settings.attributeFlags = sf::ContextSettings::Core;
+//    sf::ContextSettings settings;
+//    settings.depthBits = 24;
+//    settings.stencilBits = 8;
+//    settings.majorVersion = 4;
+//    settings.minorVersion = 3;
+//    settings.attributeFlags = sf::ContextSettings::Core;
 
-    sf::Window window(sf::VideoMode(1000, 1000, 32), "First Window",
+    sf::Window window(sf::VideoMode(1200, 900, 32), "First Window",
                             sf::Style::Titlebar | sf::Style::Close);
 
 //    window.setMouseCursorVisible(false);
@@ -63,7 +62,7 @@ int main() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)nullptr);
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -82,7 +81,7 @@ int main() {
     int width, height, nr_channels;
     stbi_set_flip_vertically_on_load(true);
 
-    unsigned char* data = stbi_load("../resources/images/1.jpg", &width, &height, &nr_channels, 0);
+    unsigned char* data = stbi_load("../resources/images/2.jpg", &width, &height, &nr_channels, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -94,7 +93,7 @@ int main() {
     bool is_go = true;
     bool can_rotate = false;
     while (is_go) {
-        sf::Event window_event;
+        sf::Event window_event{};
         while (window.pollEvent(window_event)) {
             switch (window_event.type) {
                 case sf::Event::Closed:
@@ -136,7 +135,7 @@ int main() {
         my_shader.set_mat4("view", view);
         my_shader.set_mat4("projection", projection);
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         window.display();
     }
