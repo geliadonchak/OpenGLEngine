@@ -1947,31 +1947,31 @@ TEST_CASE("Matrix testing") {
 //        }
 //    }
 
-//    SECTION("Generation lookAt matrix") {
-//        std::vector<Vector> my_vectors = {
-//                Vector(3, 7.01),
-//                Vector(3, -2),
-//                Vector{23.22, -13.09, 9},
-//                Vector{3, 36, -425.1},
-//                Vector{9.34, 421, -24}
-//        };
-//
-//        std::vector<glm::vec3> glm_vectors = {
-//                glm::vec3(7.01, 7.01, 7.01),
-//                glm::vec3(-2, -2, -2),
-//                glm::vec3(23.22, -13.09, 9),
-//                glm::vec3(3, 36, -425.1),
-//                glm::vec3(9.34, 421, -24)
-//        };
-//
-//        for (int i = 0; i < 5; ++i) {
-//            for (int j = i + 1; j < 4; ++j) {
-//                Matrix res = Matrix::look_at(my_vectors[i], my_vectors[j], Vector{0, 0, 1});
-//                glm::mat4 glm_res = glm::lookAt(glm_vectors[i], glm_vectors[j], glm::vec3(0, 0, 1));
-//                compare_matrix(glm_res, res);
-//            }
-//        }
-//    }
+    SECTION("Generation lookAt matrix") {
+        std::vector<Vector> my_vectors = {
+                Vector(3, 7.01),
+                Vector(3, -2),
+                Vector{23.22, -13.09, 9},
+                Vector{3, 36, -425.1},
+                Vector{9.34, 421, -24}
+        };
+
+        std::vector<glm::vec3> glm_vectors = {
+                glm::vec3(7.01, 7.01, 7.01),
+                glm::vec3(-2, -2, -2),
+                glm::vec3(23.22, -13.09, 9),
+                glm::vec3(3, 36, -425.1),
+                glm::vec3(9.34, 421, -24)
+        };
+
+        for (int i = 0; i < 5; ++i) {
+            for (int j = i + 1; j < 4; ++j) {
+                Matrix res = Matrix::look_at(my_vectors[i], my_vectors[j], Vector{0, 0, 1});
+                glm::mat4 glm_res = glm::lookAt(glm_vectors[i], glm_vectors[j], glm::vec3(0, 0, 1));
+                compare_matrix(glm_res, res);
+            }
+        }
+    }
 
     SECTION("Generation perspective matrix") {
         std::vector<float> floats = {-53, 1.1414, 23, -4, 7.4, 9, 19.14, 34, 149, 4, -33.2, -34.4, 48.34, 50.002, -59.435, 48.1, 3, 48};

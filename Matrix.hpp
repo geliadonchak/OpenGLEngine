@@ -379,7 +379,7 @@ public:
         return adjugate;
     }
 
-    Matrix inverse() {
+    Matrix inverse() const {
         float det = this->determinant();
         if (det == 0) {
             throw std::runtime_error("Can't calculate inverse matrix. Matrix is degenerate");
@@ -424,48 +424,48 @@ public:
         Matrix y_matrix = identity_matrix(4);
         Matrix z_matrix = identity_matrix(4);
 
-        x_matrix[1][1] = cos(alpha);
-        x_matrix[1][2] = -sin(alpha);
-        x_matrix[2][1] = sin(alpha);
-        x_matrix[2][2] = cos(alpha);
+        x_matrix[1][1] = std::cos(alpha);
+        x_matrix[1][2] = -std::sin(alpha);
+        x_matrix[2][1] = std::sin(alpha);
+        x_matrix[2][2] = std::cos(alpha);
 
-        y_matrix[0][0] = cos(beta);
-        y_matrix[0][2] = sin(beta);
-        y_matrix[2][0] = -sin(beta);
-        y_matrix[2][2] = cos(beta);
+        y_matrix[0][0] = std::cos(beta);
+        y_matrix[0][2] = std::sin(beta);
+        y_matrix[2][0] = -std::sin(beta);
+        y_matrix[2][2] = std::cos(beta);
 
-        z_matrix[0][0] = cos(gamma);
-        z_matrix[0][1] = -sin(gamma);
-        z_matrix[1][0] = sin(gamma);
-        z_matrix[1][1] = cos(gamma);
+        z_matrix[0][0] = std::cos(gamma);
+        z_matrix[0][1] = -std::sin(gamma);
+        z_matrix[1][0] = std::sin(gamma);
+        z_matrix[1][1] = std::cos(gamma);
 
         return x_matrix * y_matrix * z_matrix;
     }
 
     static Matrix look_at(const Vector &from, const Vector &to, const Vector &world_up) {
-        Vector forward = (from - to).normalize();
-        world_up.normalize();
-        Vector right = Vector::cross_product(world_up, forward).normalize();
-        Vector up = Vector::cross_product(forward, right).normalize();
-
         Matrix matrix = identity_matrix(4);
-        for (int i = 0; i < 3; ++i) {
-            matrix[0][i] = right[i];
-            matrix[1][i] = up[i];
-            matrix[2][i] = forward[i];
-            matrix[3][i] = from[i];
+        Vector forward((to - from).normalize());
+        Vector right(Vector::cross_product(forward, world_up).normalize());
+        Vector up(Vector::cross_product(right, forward));
+
+        for (int i = 0; i < 3; i++) {
+            matrix[i][0] = right[i];
+            matrix[i][1] = up[i];
+            matrix[i][2] = -forward[i];
         }
+
+        matrix[3][0] = -right.scalar_product(from);
+        matrix[3][1] = -up.scalar_product(from);
+        matrix[3][2] = forward.scalar_product(from);
 
         return matrix;
     }
 
-
-
     static Matrix perspective(const float &fov, const float &ratio, const float &near, const float &far) {
         Matrix matrix(4);
 
-        matrix[0][0] = 1 / (ratio * tan(fov / 2));
-        matrix[1][1] = 1 / tan(fov / 2);
+        matrix[0][0] = 1 / (ratio * std::tan(fov / 2));
+        matrix[1][1] = 1 / std::tan(fov / 2);
         matrix[2][2] = (near + far) / (near - far);
         matrix[2][3] = -1;
         matrix[3][2] = (2 * far * near) / (near - far);

@@ -14,10 +14,11 @@ find_package(GLEW REQUIRED)
 find_package(SFML COMPONENTS system window network graphics audio REQUIRED)
 
 add_executable(OpenGLEngineTests tests/tests.cpp)
+add_executable(OpenGLEngine main.cpp external/stb/stb_image.cpp utils/shaderLoader.cpp)
 
 include_directories(${OPENGL_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS} ${SFML_DIR})
 
-target_link_libraries(OpenGLEngineTests
+set(LIBRARIES
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES}
         sfml-system
@@ -26,3 +27,6 @@ target_link_libraries(OpenGLEngineTests
         sfml-graphics
         sfml-audio
         )
+
+target_link_libraries(OpenGLEngineTests ${LIBRARIES})
+target_link_libraries(OpenGLEngine ${LIBRARIES})
