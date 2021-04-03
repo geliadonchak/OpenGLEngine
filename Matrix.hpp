@@ -372,7 +372,7 @@ public:
                     }
                 }
 
-                adjugate[i][j] = Mat_ij.determinant() * std::pow(-1, i + j + 2);
+                adjugate[i][j] = Mat_ij.determinant() * (float)std::pow(-1, i + j + 2);
             }
         }
 
@@ -416,8 +416,6 @@ public:
 
         return matrix;
     }
-
-
 
     static Matrix rotate(const float &alpha, const float &beta, const float &gamma) {
         Matrix x_matrix = identity_matrix(4);
@@ -558,7 +556,7 @@ private:
                 }
             }
 
-            determinant += pow(-1, i + 2) * mat[0][i] * find_determinant(temp, n - 1);
+            determinant += (float)pow(-1, i + 2) * mat[0][i] * find_determinant(temp, n - 1);
         }
 
         return determinant;

@@ -10,12 +10,12 @@
 #include "utils/Shader.hpp"
 
 int main() {
-//    sf::ContextSettings settings;
-//    settings.depthBits = 24;
-//    settings.stencilBits = 8;
-//    settings.majorVersion = 4;
-//    settings.minorVersion = 3;
-//    settings.attributeFlags = sf::ContextSettings::Core;
+    sf::ContextSettings settings;
+    settings.depthBits = 24;
+    settings.stencilBits = 8;
+    settings.majorVersion = 4;
+    settings.minorVersion = 3;
+    settings.attributeFlags = sf::ContextSettings::Core;
 
     sf::Window window(sf::VideoMode(1200, 900, 32), "First Window",
                             sf::Style::Titlebar | sf::Style::Close);
@@ -32,6 +32,11 @@ int main() {
         return -1;
     }
 
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LEQUAL);
+    glDepthRange(0.0f, 1.0f);
+    glEnable(GL_DEPTH_TEST);
+
     std::string s1 = "../resources/shaders/e4.vs";
     std::string s2 = "../resources/shaders/e4.fs";
     Shader my_shader(s1, s2);
@@ -39,15 +44,29 @@ int main() {
     Camera camera;
 
     float vertices[] = {
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-            -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-            0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
-            0.5f, -0.5f, 0.0f, 1.0f, 0.0f
+//нижний
+            0.0f, 0.0f, 0.0f, 0.25f, 0.43f,
+            0.86f, 0.0f, 0.0f, 0.5f, 0.0f,
+            0.43f, 0.86f, 0.0f, 0.75f, 0.43f,
+//задний
+            0.0f, 0.0f, 0.0f, 0.26f, 0.43f,
+            0.43f, 0.86f, 0.0f, 0.75f, 0.43f,
+            0.43f, 0.43f, 0.43f, 0.5f, 0.86f,
+//правый
+            0.86f, 0.0f, 0.0f, 0.5f, 0.0f,
+            0.43f, 0.86f, 0.0f, 0.75f, 0.43f,
+            0.43f, 0.43f, 0.43f, 1.0f, 0.0f,
+//нижний
+            0.0f, 0.0f, 0.0f, 0.25f, 0.43f,
+            0.86f, 0.0f, 0.0f, 0.5f, 0.0f,
+            0.43f, 0.43f, 0.43f, 0.0f, 0.0f
     };
 
     unsigned int indices[] = {
-            0, 1, 3,
-            1, 2, 3
+            0, 1, 2,
+            3, 4, 5,
+            6, 7, 8,
+            9, 10, 11,
     };
 
     unsigned int VBO, VAO, EBO;
@@ -62,7 +81,7 @@ int main() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)nullptr);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)nullptr);
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -81,7 +100,7 @@ int main() {
     int width, height, nr_channels;
     stbi_set_flip_vertically_on_load(true);
 
-    unsigned char* data = stbi_load("../resources/images/2.jpg", &width, &height, &nr_channels, 0);
+    unsigned char* data = stbi_load("../resources/images/tetrahedron.jpg", &width, &height, &nr_channels, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -119,7 +138,7 @@ int main() {
         }
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -128,6 +147,7 @@ int main() {
         glBindVertexArray(VAO);
 
         Matrix model = Matrix::identity_matrix(4);
+
         Matrix view(camera.get_view_matrix());
         Matrix projection(camera.get_projection_matrix());
 
@@ -135,8 +155,7 @@ int main() {
         my_shader.set_mat4("view", view);
         my_shader.set_mat4("projection", projection);
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
         window.display();
     }
 
