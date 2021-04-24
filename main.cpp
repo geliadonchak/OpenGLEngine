@@ -11,21 +11,16 @@
 
 int main() {
     sf::ContextSettings settings;
-    settings.depthBits = 24;
+    settings.depthBits = 40;
     settings.stencilBits = 8;
     settings.majorVersion = 4;
     settings.minorVersion = 3;
     settings.attributeFlags = sf::ContextSettings::Core;
 
     sf::Window window(sf::VideoMode(1200, 900, 32), "First Window",
-                            sf::Style::Titlebar | sf::Style::Close);
-
-//    window.setMouseCursorVisible(false);
-//    window.setMouseCursorGrabbed(true);
+                      sf::Style::Titlebar | sf::Style::Close, settings);
 
     glewExperimental = GL_TRUE;
-
-    glEnable(GL_DEPTH_TEST);
 
     if (GLEW_OK != glewInit()) {
         std::cout << "Error:: glew not init =(" << std::endl;
@@ -44,36 +39,60 @@ int main() {
     Camera camera;
 
     float vertices[] = {
-//нижний
-            0.0f, 0.0f, 0.0f, 0.25f, 0.43f,
-            0.86f, 0.0f, 0.0f, 0.5f, 0.0f,
-            0.43f, 0.86f, 0.0f, 0.75f, 0.43f,
-//задний
-            0.0f, 0.0f, 0.0f, 0.26f, 0.43f,
-            0.43f, 0.86f, 0.0f, 0.75f, 0.43f,
-            0.43f, 0.43f, 0.43f, 0.5f, 0.86f,
-//правый
-            0.86f, 0.0f, 0.0f, 0.5f, 0.0f,
-            0.43f, 0.86f, 0.0f, 0.75f, 0.43f,
-            0.43f, 0.43f, 0.43f, 1.0f, 0.0f,
-//нижний
-            0.0f, 0.0f, 0.0f, 0.25f, 0.43f,
-            0.86f, 0.0f, 0.0f, 0.5f, 0.0f,
-            0.43f, 0.43f, 0.43f, 0.0f, 0.0f
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
     unsigned int indices[] = {
-            0, 1, 2,
-            3, 4, 5,
-            6, 7, 8,
-            9, 10, 11,
+            0, 1, 3,
+            1, 2, 3
     };
 
     unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
     glBindVertexArray(VAO);
 
-    glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
@@ -100,7 +119,7 @@ int main() {
     int width, height, nr_channels;
     stbi_set_flip_vertically_on_load(true);
 
-    unsigned char* data = stbi_load("../resources/images/tetrahedron.jpg", &width, &height, &nr_channels, 0);
+    unsigned char* data = stbi_load("../resources/images/sad_cat.jpg", &width, &height, &nr_channels, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -121,16 +140,8 @@ int main() {
                 case sf::Event::KeyPressed:
                     camera.keyboard_input();
                     break;
-                case sf::Event::MouseButtonPressed:
-                    can_rotate = true;
-                    break;
-                case sf::Event::MouseButtonReleased:
-                    can_rotate = false;
-                    break;
                 case sf::Event::MouseMoved:
-                    if (can_rotate) {
-                        camera.mouse_input(window);
-                    }
+                    camera.mouse_input(window, window_event.mouseMove.x, window_event.mouseMove.y);
                     break;
                 default:
                     break;
@@ -155,7 +166,7 @@ int main() {
         my_shader.set_mat4("view", view);
         my_shader.set_mat4("projection", projection);
 
-        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
         window.display();
     }
 

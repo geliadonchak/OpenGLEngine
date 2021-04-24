@@ -42,20 +42,32 @@ public:
         }
     }
 
-    void mouse_input(sf::Window& window) {
-        if (mouse_move) {
-            mouse_move = false;
-            xPos = sf::Mouse::getPosition(window).x;
-            yPos = sf::Mouse::getPosition(window).y;
+    void mouse_input(sf::Window& window, float x_pos, float y_pos) {
+        if (firstMouse) {
+            lastX = x_pos;
+            lastY = y_pos;
+            firstMouse = false;
         }
 
-        float xOffset = sf::Mouse::getPosition(window).x - xPos;
-        float yOffset = yPos - sf::Mouse::getPosition(window).y;
-        xPos = sf::Mouse::getPosition(window).x;
-        yPos = sf::Mouse::getPosition(window).y;
+        float x_offset = x_pos - lastX;
+        float y_offset = lastY - y_pos;
+        lastX = x_pos;
+        lastY = y_pos;
 
-        yaw += (xOffset * speed);
-        pitch += (yOffset * speed);
+        x_offset *= speed;
+        y_offset *= speed;
+
+        yaw += x_offset;
+        pitch += y_offset;
+
+        // make sure that when pitch is out of bounds, screen doesn't get flipped
+        if (pitch > 89.0f) {
+            pitch = 89.0f;
+        }
+
+        if (pitch < -89.0f) {
+            pitch = -89.0f;
+        }
 
         Vector front(3);
         front[0] = static_cast<float>(cos(glm::radians(yaw)) * cos(glm::radians(pitch)));
@@ -70,11 +82,12 @@ private:
     Vector camera_up;
 
     float speed = 0.2;
-    float xPos = 800 / 2.0;
-    float yPos = 600 / 2.0;
 
     float yaw = -90.0;
     float pitch = 0.0;
-    bool mouse_move = true;
+    bool firstMouse = true;
+
+    float lastX;
+    float lastY;
 };
 
