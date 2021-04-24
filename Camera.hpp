@@ -76,6 +76,10 @@ public:
         camera_front = front.normalize();
     }
 
+    const Vector &get_camera_position() const {
+        return camera_position;
+    }
+
 private:
     Vector camera_position;
     Vector camera_front;
