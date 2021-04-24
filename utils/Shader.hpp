@@ -17,6 +17,14 @@ public:
         glUniformMatrix4fv(glGetUniformLocation(shader_id, name), 1, GL_FALSE, &glm_matrix[0][0]);
     }
 
+    void set_vec3(const GLchar *name, const Vector &value) const {
+        glUniform3fv(glGetUniformLocation(shader_id, name), 1, &value[0]);
+    }
+
+    void set_vec3(const GLchar *name, float x, float y, float z) const {
+        glUniform3f(glGetUniformLocation(shader_id, name), x, y, z);
+    }
+
 private:
     GLuint shader_id;
 
