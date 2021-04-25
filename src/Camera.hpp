@@ -7,7 +7,7 @@
 #include "Matrix.hpp"
 
 class Camera {
-public:
+ public:
     Camera() : camera_position(3), camera_front(3), camera_up(3) {
         camera_position = Vector{0.0, 0.0, 3.0};
         camera_front = Vector{0.0, 0.0, -1.0};
@@ -44,15 +44,15 @@ public:
 
     void mouse_input(sf::Window& window, float x_pos, float y_pos) {
         if (firstMouse) {
-            lastX = x_pos;
-            lastY = y_pos;
+            last_x = x_pos;
+            last_y = y_pos;
             firstMouse = false;
         }
 
-        float x_offset = x_pos - lastX;
-        float y_offset = lastY - y_pos;
-        lastX = x_pos;
-        lastY = y_pos;
+        float x_offset = x_pos - last_x;
+        float y_offset = last_y - y_pos;
+        last_x = x_pos;
+        last_y = y_pos;
 
         x_offset *= speed;
         y_offset *= speed;
@@ -60,7 +60,6 @@ public:
         yaw += x_offset;
         pitch += y_offset;
 
-        // make sure that when pitch is out of bounds, screen doesn't get flipped
         if (pitch > 89.0f) {
             pitch = 89.0f;
         }
@@ -80,7 +79,15 @@ public:
         return camera_position;
     }
 
-private:
+    const Vector &get_camera_front() const {
+        return camera_front;
+    }
+
+    const Vector &get_camera_up() const {
+        return camera_up;
+    }
+
+ private:
     Vector camera_position;
     Vector camera_front;
     Vector camera_up;
@@ -91,7 +98,7 @@ private:
     float pitch = 0.0;
     bool firstMouse = true;
 
-    float lastX;
-    float lastY;
+    float last_x;
+    float last_y;
 };
 

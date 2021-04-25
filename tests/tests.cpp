@@ -3,7 +3,7 @@
 #include <catch2/catch.hpp>
 #include <stdio.h>
 
-#include "../Matrix.hpp"
+#include "../src/Matrix.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 

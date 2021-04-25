@@ -1,5 +1,8 @@
 #pragma ones
 
+#ifndef OPENGLENGINE_VECTOR_HPP
+#define OPENGLENGINE_VECTOR_HPP
+
 #include <cmath>
 #include <ostream>
 
@@ -44,6 +47,8 @@ class Vector {
             data[i] = other.data[i];
         }
     }
+
+    Vector() = default;
 
     Vector &operator=(const Vector &other) {
         if (this == &other) {
@@ -236,3 +241,5 @@ class Vector {
         }
     }
 };
+
+#endif //OPENGLENGINE_VECTOR_HPP

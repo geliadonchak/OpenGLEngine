@@ -1,9 +1,12 @@
 #pragma once
 
-#include "shaderLoader.hpp"
+#ifndef OPENGLENGINE_SHADER_HPP
+#define OPENGLENGINE_SHADER_HPP
+
+#include "ShaderLoader.hpp"
 
 class Shader {
-public:
+ public:
     Shader(std::string &vertex_path, std::string &fragment_path) {
         shader_id = LoadShaders(vertex_path, fragment_path);
     }
@@ -25,7 +28,15 @@ public:
         glUniform3f(glGetUniformLocation(shader_id, name), x, y, z);
     }
 
-private:
+    void set_float(const GLchar *name, float value) const {
+        glUniform1f(glGetUniformLocation(shader_id, name), value);
+    }
+
+    void set_int(const GLchar *name, int value) const {
+        glUniform1f(glGetUniformLocation(shader_id, name), value);
+    }
+
+ private:
     GLuint shader_id;
 
     static glm::mat4 matrix_to_glm(const Matrix &data) {
@@ -37,3 +48,5 @@ private:
         };
     }
 };
+
+#endif //OPENGLENGINE_SHADER_HPP

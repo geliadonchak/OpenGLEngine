@@ -14,7 +14,7 @@ find_package(GLEW REQUIRED)
 find_package(SFML COMPONENTS system window network graphics audio REQUIRED)
 
 add_executable(OpenGLEngineTests tests/tests.cpp)
-add_executable(OpenGLEngine main.cpp external/stb/stb_image.cpp utils/shaderLoader.cpp)
+add_executable(OpenGLEngine src/main.cpp external/stb/stb_image.cpp src/utils/ShaderLoader.cpp src/LightSource.hpp src/utils/LightningShaderFiller.hpp)
 
 include_directories(${OPENGL_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS} ${SFML_DIR})
 

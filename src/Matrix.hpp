@@ -1,5 +1,8 @@
 #pragma ones
 
+#ifndef OPENGLENGINE_MATRIX_HPP
+#define OPENGLENGINE_MATRIX_HPP
+
 #include <cmath>
 #include <iostream>
 #include <iomanip>
@@ -562,3 +565,5 @@ private:
         return determinant;
     }
 };
+
+#endif //OPENGLENGINE_MATRIX_HPP
