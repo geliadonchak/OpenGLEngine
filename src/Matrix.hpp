@@ -17,7 +17,7 @@ public:
         }
     }
 
-    Matrix(size_t n, float number): data_size(n) {
+    Matrix(size_t n, float number) : data_size(n) {
         data = reinterpret_cast<Vector *>(new char[sizeof(Vector) * n]);
         for (int i = 0; i < n; ++i) {
             data[i] = Vector(n, number);
@@ -375,7 +375,7 @@ public:
                     }
                 }
 
-                adjugate[i][j] = Mat_ij.determinant() * (float)std::pow(-1, i + j + 2);
+                adjugate[i][j] = Mat_ij.determinant() * (float) std::pow(-1, i + j + 2);
             }
         }
 
@@ -474,7 +474,8 @@ public:
         return matrix;
     }
 
-    static Matrix ortho(const float &right, const float &left, const float &top, const float &bottom, const float &near, const float &far) {
+    static Matrix ortho(const float &right, const float &left, const float &top, const float &bottom, const float &near,
+                        const float &far) {
         Matrix matrix = identity_matrix(4);
 
         matrix[0][0] = -2 / (right - left);
@@ -482,7 +483,7 @@ public:
         matrix[1][1] = -2 / (top - bottom);
         matrix[1][3] = (top + bottom) / (top - bottom);
         matrix[2][2] = -2 / (far - near);
-        matrix[2][3] = - (far + near) / (far - near);
+        matrix[2][3] = -(far + near) / (far - near);
 
         return matrix;
     }
@@ -559,7 +560,7 @@ private:
                 }
             }
 
-            determinant += (float)pow(-1, i + 2) * mat[0][i] * find_determinant(temp, n - 1);
+            determinant += (float) pow(-1, i + 2) * mat[0][i] * find_determinant(temp, n - 1);
         }
 
         return determinant;

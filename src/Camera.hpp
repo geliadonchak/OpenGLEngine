@@ -7,7 +7,7 @@
 #include "Matrix.hpp"
 
 class Camera {
- public:
+public:
     Camera() : camera_position(3), camera_front(3), camera_up(3) {
         camera_position = Vector{0.0, 0.0, 3.0};
         camera_front = Vector{0.0, 0.0, -1.0};
@@ -42,7 +42,7 @@ class Camera {
         }
     }
 
-    void mouse_input(sf::Window& window, float x_pos, float y_pos) {
+    void mouse_input(sf::Window &window, float x_pos, float y_pos) {
         if (firstMouse) {
             last_x = x_pos;
             last_y = y_pos;
@@ -87,7 +87,7 @@ class Camera {
         return camera_up;
     }
 
- private:
+private:
     Vector camera_position;
     Vector camera_front;
     Vector camera_up;

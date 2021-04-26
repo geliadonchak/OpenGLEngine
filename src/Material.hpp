@@ -4,9 +4,9 @@
 #define OPENGLENGINE_MATERIAL_HPP
 
 class Material {
- public:
+public:
     Material(int _diffuse, int _specular, float _shininess) :
-        diffuse(_diffuse), specular(_specular), shininess(_shininess) {};
+            diffuse(_diffuse), specular(_specular), shininess(_shininess) {};
 
     int get_diffuse() const {
         return diffuse;
@@ -20,7 +20,7 @@ class Material {
         return shininess;
     };
 
- private:
+private:
     int diffuse = 0;
     int specular = 0;
     float shininess = 0.f;

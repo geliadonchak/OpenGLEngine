@@ -7,7 +7,7 @@
 #include <ostream>
 
 class Vector {
-  public:
+public:
     Vector(size_t n) : data_size(n) {
         data = new float[n];
         for (int i = 0; i < n; ++i) {
@@ -231,7 +231,7 @@ class Vector {
         delete[] data;
     }
 
-  private:
+private:
     float *data;
     size_t data_size;
 
