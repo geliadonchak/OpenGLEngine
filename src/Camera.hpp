@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef OPENGLENGINE_CAMERA_HPP
+#define OPENGLENGINE_CAMERA_HPP
+
 #include <SFML/Window.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -7,7 +10,7 @@
 #include "Matrix.hpp"
 
 class Camera {
-public:
+ public:
     Camera() : camera_position(3), camera_front(3), camera_up(3) {
         camera_position = Vector{0.0, 0.0, 3.0};
         camera_front = Vector{0.0, 0.0, -1.0};
@@ -87,7 +90,7 @@ public:
         return camera_up;
     }
 
-private:
+ private:
     Vector camera_position;
     Vector camera_front;
     Vector camera_up;
@@ -102,3 +105,4 @@ private:
     float last_y;
 };
 
+#endif  // OPENGLENGINE_CAMERA_HPP

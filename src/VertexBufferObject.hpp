@@ -27,4 +27,4 @@ class VertexBufferObject {
     unsigned int ID{};
 };
 
-#endif //OPENGLENGINE_VERTEXBUFFEROBJECT_HPP
+#endif  // OPENGLENGINE_VERTEXBUFFEROBJECT_HPP

@@ -42,13 +42,9 @@ int main() {
     glDepthFunc(GL_LEQUAL);
     glDepthRange(0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
-//не менять
-//    std::string s1 = "../resources/shaders/directional_lighting.vs";
-//    std::string s2 = "../resources/shaders/directional_lighting.fs";
-//     std::string s1 = "../resources/shaders/point_lighting.vs";
-//    std::string s2 = "../resources/shaders/point_lighting.fs";
-    std::string s1 = "../resources/shaders/spot_lighting.vs";
-    std::string s2 = "../resources/shaders/spot_lighting.fs";
+
+    std::string s1 = "../resources/shaders/combined_light.vs";
+    std::string s2 = "../resources/shaders/combined_light.fs";
 
     std::string s3 = "../resources/shaders/light_cube.vs";
     std::string s4 = "../resources/shaders/light_cube.fs";
@@ -115,6 +111,13 @@ int main() {
             Vector{-1.3f, 1.0f, -1.5f}
     };
 
+    Vector point_light_positions[] = {
+            Vector{0.7f,  0.2f,  2.0f},
+            Vector{2.3f, -3.3f, -4.0f},
+            Vector{-4.0f,  2.0f, -12.0f},
+            Vector{0.0f,  0.0f, -3.0f}
+    };
+
     VertexArrayObject cube_VAO;
     VertexBufferObject VBO(vertices, sizeof(vertices));
     VertexArrayObject::link_vertex_attr(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) nullptr);
@@ -153,42 +156,47 @@ int main() {
             }
         }
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         lighting_shader.use();
-//не менять
-//        LightSource dir_light(LightSource::DIRECTIONAL);
-//        dir_light.get_light_source()
-//                ->set_direction({-0.2f, -1.0f, -0.3f})
-//                ->set_ambient({0.2f, 0.2f, 0.2f})
-//                ->set_diffuse({1.0f, 1.0f, 1.0f})
-//                ->set_specular({1.0f, 1.0f, 1.0f});
-//        LightningShaderFiller::fill_light_shader(lighting_shader, dir_light);
-//не менять
-//        LightSource point_light(LightSource::POINT);
-//        point_light.get_light_source()
-//            ->set_position(light_pos)
-//            ->set_ambient({0.2f, 0.2f, 0.2f})
-//            ->set_diffuse({1.0f, 1.0f, 1.0f})
-//            ->set_specular({1.0f, 1.0f, 1.0f})
-//            ->set_constant(1.0f)
-//            ->set_linear(0.09f)
-//            ->set_quadratic(0.032f);
-//        LightningShaderFiller::fill_light_shader(lighting_shader, point_light);
+
+        LightningShaderFiller::fill_default_values(lighting_shader, 4);
+
+        LightSource dir_light(LightSource::DIRECTIONAL);
+        dir_light.get_light_source()
+                ->set_direction({-0.2f, -1.0f, -0.3f})
+                ->set_ambient({0.05f, 0.05f, 0.05f})
+                ->set_diffuse({0.5f, 0.5f, 0.5f})
+                ->set_specular({0.5f, 0.5f, 0.5f});
+        LightningShaderFiller::fill_light_shader(lighting_shader, dir_light);
+
+        for (int i = 0; i < point_light_positions->size(); i++) {
+            LightSource point_light(LightSource::POINT);
+            point_light.get_light_source()
+                ->set_point_index(i)
+                ->set_position(point_light_positions[i])
+                ->set_ambient({0.05f, 0.05f, 0.05f})
+                ->set_diffuse({0.8f, 0.8f, 0.8f})
+                ->set_specular({1.0f, 1.0f, 1.0f})
+                ->set_constant(1.0f)
+                ->set_linear(0.09f)
+                ->set_quadratic(0.032f);
+            LightningShaderFiller::fill_light_shader(lighting_shader, point_light);
+        }
 
         LightSource spot_light(LightSource::SPOT);
         spot_light.get_light_source()
-                ->set_position(light_pos)
+                ->set_position(camera.get_camera_position())
                 ->set_direction(camera.get_camera_front())
                 ->set_cut_off(glm::cos(glm::radians(15.0f)))
                 ->set_outer_cut_off(glm::cos(glm::radians(23.0f)))
-                ->set_ambient({0.2f, 0.2f, 0.2f})
+                ->set_ambient({0.0f, 0.0f, 0.0f})
                 ->set_diffuse({2.0f, 2.0f, 2.0f})
                 ->set_specular({1.0f, 1.0f, 1.0f})
                 ->set_constant(1.0f)
                 ->set_linear(0.09f)
-                ->set_quadratic(0.03f);
+                ->set_quadratic(0.032f);
         LightningShaderFiller::fill_light_shader(lighting_shader, spot_light);
 
         Matrix model = Matrix::identity_matrix(4);
@@ -215,16 +223,18 @@ int main() {
         light_cube_shader.use();
         light_cube_shader.set_mat4("projection", projection);
         light_cube_shader.set_mat4("view", view);
-        model = Matrix::transform(light_pos).transposed();
 
-        for (int i = 0; i < 3; ++i) {
-            model[i][i] = 0.2f;
+        for (const auto & point_light_position : point_light_positions) {
+            model = Matrix::transform(point_light_position).transposed();
+
+            model[3][3] = 1;
+            for (int j = 0; j < 3; ++j) {
+                model[j][j] = 0.2f;
+            }
+
+            light_cube_shader.set_mat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-        model[3][3] = 1;
-        light_cube_shader.set_mat4("model", model);
-
-        light_cube_VAO.bind_array();
-        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         window.display();
     }
@@ -237,4 +247,4 @@ int main() {
     return 0;
 }
 
-#endif // OPENGLENGINE_MAIN_CPP
+#endif  // OPENGLENGINE_MAIN_CPP

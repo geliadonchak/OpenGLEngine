@@ -113,8 +113,19 @@ public:
         return outer_cut_off;
     };
 
+    size_t get_point_index() const {
+        return point_index;
+    }
+
+    LightSource *set_point_index(size_t _point_index) {
+        point_index = _point_index;
+        return this;
+    }
+
 private:
     light_caster_type type = DIRECTIONAL;
+
+    size_t point_index = 0;
 
     Vector direction{};
     Vector ambient{};
@@ -129,4 +140,4 @@ private:
     float outer_cut_off = std::numeric_limits<float>::min();
 };
 
-#endif //OPENGLENGINE_LIGHT_SOURCE_HPP
+#endif  // OPENGLENGINE_LIGHT_SOURCE_HPP

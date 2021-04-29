@@ -15,25 +15,25 @@ class Shader {
         glUseProgram(shader_id);
     }
 
-    void set_mat4(const GLchar *name, const Matrix &data) const {
+    void set_mat4(const std::string& name, const Matrix &data) const {
         glm::mat4 glm_matrix = matrix_to_glm(data);
-        glUniformMatrix4fv(glGetUniformLocation(shader_id, name), 1, GL_FALSE, &glm_matrix[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(shader_id, &name[0]), 1, GL_FALSE, &glm_matrix[0][0]);
     }
 
-    void set_vec3(const GLchar *name, const Vector &value) const {
-        glUniform3fv(glGetUniformLocation(shader_id, name), 1, &value[0]);
+    void set_vec3(const std::string& name, const Vector &value) const {
+        glUniform3fv(glGetUniformLocation(shader_id, &name[0]), 1, &value[0]);
     }
 
-    void set_vec3(const GLchar *name, float x, float y, float z) const {
-        glUniform3f(glGetUniformLocation(shader_id, name), x, y, z);
+    void set_vec3(const std::string& name, float x, float y, float z) const {
+        glUniform3f(glGetUniformLocation(shader_id, &name[0]), x, y, z);
     }
 
-    void set_float(const GLchar *name, float value) const {
-        glUniform1f(glGetUniformLocation(shader_id, name), value);
+    void set_float(const std::string& name, float value) const {
+        glUniform1f(glGetUniformLocation(shader_id, &name[0]), value);
     }
 
-    void set_int(const GLchar *name, int value) const {
-        glUniform1f(glGetUniformLocation(shader_id, name), value);
+    void set_int(const std::string& name, int value) const {
+        glUniform1f(glGetUniformLocation(shader_id, &name[0]), value);
     }
 
  private:
@@ -49,4 +49,4 @@ class Shader {
     }
 };
 
-#endif //OPENGLENGINE_SHADER_HPP
+#endif  // OPENGLENGINE_SHADER_HPP

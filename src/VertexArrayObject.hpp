@@ -31,4 +31,4 @@ class VertexArrayObject {
     unsigned int ID{};
 };
 
-#endif //OPENGLENGINE_VERTEXARRAYOBJECT_HPP
+#endif  // OPENGLENGINE_VERTEXARRAYOBJECT_HPP

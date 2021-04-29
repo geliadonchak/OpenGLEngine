@@ -6,10 +6,13 @@
 #include <cmath>
 #include <iostream>
 #include <iomanip>
+#include <algorithm>
+#include <utility>
+#include <string>
 #include "Vector.hpp"
 
 class Matrix {
-public:
+ public:
     Matrix(size_t n) : data_size(n) {
         data = reinterpret_cast<Vector *>(new char[sizeof(Vector) * n]);
         for (int i = 0; i < n; ++i) {
@@ -375,7 +378,8 @@ public:
                     }
                 }
 
-                adjugate[i][j] = Mat_ij.determinant() * (float) std::pow(-1, i + j + 2);
+                adjugate[i][j] = Mat_ij.determinant() *
+                        static_cast<float>(std::pow(-1, i + j + 2));
             }
         }
 
@@ -474,8 +478,9 @@ public:
         return matrix;
     }
 
-    static Matrix ortho(const float &right, const float &left, const float &top, const float &bottom, const float &near,
-                        const float &far) {
+    static Matrix ortho(const float &right, const float &left,
+                        const float &top, const float &bottom,
+                        const float &near, const float &far) {
         Matrix matrix = identity_matrix(4);
 
         matrix[0][0] = -2 / (right - left);
@@ -527,7 +532,7 @@ public:
         delete data;
     }
 
-private:
+ private:
     Vector *data;
     size_t data_size;
 
@@ -560,11 +565,12 @@ private:
                 }
             }
 
-            determinant += (float) pow(-1, i + 2) * mat[0][i] * find_determinant(temp, n - 1);
+            determinant += static_cast<float>(pow(-1, i + 2)) *
+                    mat[0][i] * find_determinant(temp, n - 1);
         }
 
         return determinant;
     }
 };
 
-#endif //OPENGLENGINE_MATRIX_HPP
+#endif  // OPENGLENGINE_MATRIX_HPP

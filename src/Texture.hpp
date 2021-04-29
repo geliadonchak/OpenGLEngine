@@ -59,4 +59,4 @@ class Texture {
     unsigned int texture_id = -1;
 };
 
-#endif //OPENGLENGINE_TEXTURE_HPP
+#endif  // OPENGLENGINE_TEXTURE_HPP

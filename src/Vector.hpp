@@ -242,4 +242,4 @@ private:
     }
 };
 
-#endif //OPENGLENGINE_VECTOR_HPP
+#endif  // OPENGLENGINE_VECTOR_HPP
