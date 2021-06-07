@@ -36,6 +36,10 @@ class Shader {
         glUniform1f(glGetUniformLocation(shader_id, &name[0]), value);
     }
 
+    GLuint get_shader_id() const {
+        return shader_id;
+    }
+
  private:
     GLuint shader_id;
 
