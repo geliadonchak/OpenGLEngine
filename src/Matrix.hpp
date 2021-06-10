@@ -404,7 +404,7 @@ class Matrix {
 
         Matrix matrix = identity_matrix(4);
         for (int i = 0; i < 3; ++i) {
-            matrix[i][3] = other[i];
+            matrix[3][i] = other[i];
         }
 
         return matrix;

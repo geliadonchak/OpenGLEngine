@@ -136,6 +136,8 @@ int main() {
     model_shader.use();
     stbi_set_flip_vertically_on_load(true);
     Model model_obj_backpack("/home/gelia/Workspace/opengl/resources/models/backpack/backpack.obj");
+    Model model_obj_mars("/home/gelia/Workspace/opengl/resources/models/planet/planet.obj");
+    Model model_obj_cyborg("/home/gelia/Workspace/opengl/resources/models/cyborg/cyborg.obj");
 
     std::string s7 = "../resources/shaders/skybox.vs";
     std::string s8 = "../resources/shaders/skybox.fs";
@@ -166,20 +168,32 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         model_shader.use();
+        Matrix projection(camera.get_projection_matrix());
+        Matrix view(camera.get_view_matrix());
+        model_shader.set_mat4("projection", projection);
+        model_shader.set_mat4("view", view);
+
+
+        Matrix model_backpack = Matrix::transform(Vector{0.0f, 0.0f, 0.0f}) * Matrix::scale(Vector{0.6f, 0.6f, 0.6f});
+        model_shader.set_mat4("model", model_backpack);
         model_obj_backpack.draw(model_shader);
 
-        Matrix vw(camera.get_view_matrix());
-        Matrix prj(camera.get_projection_matrix());
-        Matrix mod = Matrix::identity_matrix(4) * Matrix::transform(Vector{0.0f, 0.0f, 0.0f}) * Matrix::scale(Vector{0.5f, 0.5f, 0.5f});
-        model_shader.set_mat4("projection", prj);
-        model_shader.set_mat4("view", vw);
-        model_shader.set_mat4("model", mod);
+
+        Matrix model_mars = Matrix::transform(Vector{5.0f, 3.0f, 5.0f}) * Matrix::scale(Vector{0.9f, 0.9f, 0.9f});
+        model_shader.set_mat4("model", model_mars);
+        model_obj_mars.draw(model_shader);
+
+
+        Matrix model_cyborg = Matrix::transform(Vector{-5.0f, -3.0f, 0.0f}) * Matrix::scale(Vector{0.9f, 0.9f, 0.9f});
+        model_shader.set_mat4("model", model_cyborg);
+        model_obj_cyborg.draw(model_shader);
 
         glDepthFunc(GL_LEQUAL);
+
         skybox_shader.use();
-        Matrix view = camera.get_view_matrix_without_translation();
-        skybox_shader.set_mat4("view", view);
-        skybox_shader.set_mat4("projection",prj);
+        Matrix view_skybox = camera.get_view_matrix_without_translation();
+        skybox_shader.set_mat4("view", view_skybox);
+        skybox_shader.set_mat4("projection", projection);
 
         skybox_VAO.bind_array();
         glBindTexture(GL_TEXTURE_CUBE_MAP, skybox_texture);
