@@ -21,6 +21,16 @@ class Camera {
         return Matrix::look_at(camera_position, camera_position + camera_front, camera_up);
     }
 
+    Matrix get_view_matrix_without_translation() {
+        Matrix result = Matrix::look_at(camera_position, camera_position + camera_front, camera_up);
+        result[3][0] = 0;
+        result[3][1] = 0;
+        result[3][2] = 0;
+        result[3][3] = 1;
+
+        return result;
+    }
+
     Matrix get_projection_matrix() {
         return Matrix::perspective(45.0f, 800.0f / 600.0f, 0.1f, 100.0f);
     }
