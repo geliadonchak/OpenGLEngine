@@ -148,6 +148,7 @@ class Model {
             }
 
             if (!skip) {
+                std::string filename = directory + '/' + str.C_Str();
                 Text texture;
                 texture.id = texture_from_file(str.C_Str(), this->directory);
                 texture.type = type_name;

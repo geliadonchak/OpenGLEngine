@@ -7,8 +7,8 @@
 
 class Shader {
  public:
-    Shader(const char* vertex_path, const char* fragment_path, const char* geometry_path = nullptr) {
-        shader_id = LoadShaders(vertex_path, fragment_path, geometry_path);
+    Shader(std::string &vertex_path, std::string &fragment_path) {
+        shader_id = LoadShaders(vertex_path, fragment_path);
     }
 
     void use() const {

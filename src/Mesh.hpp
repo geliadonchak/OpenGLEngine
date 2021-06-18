@@ -57,7 +57,8 @@ class Mesh {
                 number = std::to_string(specular_n++);
             } else if (name == "texture_normal") {
                 number = std::to_string(normal_n++);
-            } else if (name == "texture_height") {
+            }
+            else if (name == "texture_height") {
                 number = std::to_string(height_n++);
             }
 

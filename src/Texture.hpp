@@ -74,6 +74,14 @@ class Texture {
         texture_id = tex_id;
     }
 
+    std::string get_texture_type() const {
+        return type;
+    }
+
+    void set_texture_type(std::string& tex_type) {
+        type = tex_type;
+    }
+
     std::string get_texture_path() const {
         return path;
     }
@@ -84,9 +92,10 @@ class Texture {
 
  private:
     unsigned int texture_id = -1;
-    std::string path{};
+    std::string type;
+    std::string path;
 
-    static void generate_bitmap() {
+    void generate_bitmap() {
         glGenerateMipmap(GL_TEXTURE_2D);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
