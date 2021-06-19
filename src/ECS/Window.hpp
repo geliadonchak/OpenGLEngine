@@ -36,9 +36,9 @@ class Window {
     }
 
     void processEvents() {
-        sf::Event window_event{};
-        while (isActive() && window.pollEvent(window_event)) {
-            inputManager.processEvent(window_event);
+        sf::Event windowEvent{};
+        while (isActive() && window.pollEvent(windowEvent)) {
+            inputManager.processEvent(windowEvent);
         }
     }
 
