@@ -10,6 +10,8 @@
 #include "utils/Shader.hpp"
 
 #include "ECS/InputManager.hpp"
+#include "ECS/WindowSettings.hpp"
+#include "ECS/Window.hpp"
 
 #include "VertexArrayObject.hpp"
 #include "VertexBufferObject.hpp"
@@ -43,16 +45,6 @@ unsigned int load_skybox(std::vector<std::string> faces) {
 }
 
 int main() {
-    sf::ContextSettings settings;
-    settings.depthBits = 24;
-    settings.stencilBits = 8;
-    settings.majorVersion = 4;
-    settings.minorVersion = 3;
-    settings.attributeFlags = sf::ContextSettings::Core;
-
-    sf::Window window(sf::VideoMode(1200, 900, 32), "First Window",
-                      sf::Style::Titlebar | sf::Style::Close, settings);
-
     glewExperimental = GL_TRUE;
 
     if (GLEW_OK != glewInit()) {
@@ -143,24 +135,19 @@ int main() {
     skybox_shader.use();
     skybox_shader.set_int("skybox", 0);
 
-    bool is_go = true;
-
-    ECS::InputManager inputManager;
-    inputManager.addEventListener(sf::Event::Closed, [&is_go](ECS::InputEvent event) {
-        is_go = false;
+    ECS::Window window;
+    window.getInputManager().addEventListener(sf::Event::Closed, [&window](ECS::InputEvent event) {
+        window.setActive(false);
     });
-    inputManager.addEventListener(sf::Event::MouseMoved, [&camera, &window](ECS::InputEvent event) {
-        camera.mouse_input(window, event.getMousePosition().first, event.getMousePosition().second);
+    window.getInputManager().addEventListener(sf::Event::MouseMoved, [&camera](ECS::InputEvent event) {
+        camera.mouse_input(event.getMousePosition().first, event.getMousePosition().second);
     });
-    inputManager.addEventListener(sf::Event::KeyPressed, [&camera](ECS::InputEvent event) {
+    window.getInputManager().addEventListener(sf::Event::KeyPressed, [&camera](ECS::InputEvent event) {
         camera.keyboard_input(event.getPressedKey());
     });
 
-    while (is_go) {
-        sf::Event window_event{};
-        while (window.pollEvent(window_event)) {
-            inputManager.processEvent(window_event);
-        }
+    while (window.isActive()) {
+        window.processEvents();
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

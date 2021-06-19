@@ -51,7 +51,7 @@ class Camera {
         }
     }
 
-    void mouse_input(sf::Window &window, float x_pos, float y_pos) {
+    void mouse_input(float x_pos, float y_pos) {
         if (firstMouse) {
             last_x = x_pos;
             last_y = y_pos;
