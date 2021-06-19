@@ -35,23 +35,19 @@ class Camera {
         return Matrix::perspective(45.0f, 800.0f / 600.0f, 0.1f, 100.0f);
     }
 
-    void keyboard_input() {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-            camera_position += camera_front * speed;
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-            Vector crossResult(Vector::cross_product(camera_front, camera_up));
-            camera_position -= crossResult.normalize() * speed;
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-            Vector crossResult(Vector::cross_product(camera_front, camera_up));
-            camera_position += crossResult.normalize() * speed;
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-            camera_position -= camera_front * speed;
+    void keyboard_input(sf::Keyboard::Key key) {
+        Vector crossResult(Vector::cross_product(camera_front, camera_up));
+        switch (key) {
+            case sf::Keyboard::S:
+            case sf::Keyboard::W:
+                camera_position += camera_front * speed * (key == sf::Keyboard::S ? -1.f : 1.f);
+                break;
+            case sf::Keyboard::A:
+            case sf::Keyboard::D:
+                camera_position += crossResult.normalize() * speed * (key == sf::Keyboard::A ? -1.f : 1.f);
+                break;
+            default:
+                break;
         }
     }
 

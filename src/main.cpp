@@ -1,15 +1,15 @@
-#pragma once
-
 #ifndef OPENGLENGINE_MAIN_CPP
 #define OPENGLENGINE_MAIN_CPP
 
 #include <iostream>
-#include <GL/glew.h>
-#include <SFML/Window.hpp>
+//#include <GL/glew.h>
+//#include <SFML/Window.hpp>
 #include "../external/stb/stb_image.h"
 #include "utils/ShaderLoader.hpp"
 #include "Camera.hpp"
 #include "utils/Shader.hpp"
+
+#include "ECS/InputManager.hpp"
 
 #include "VertexArrayObject.hpp"
 #include "VertexBufferObject.hpp"
@@ -52,8 +52,6 @@ int main() {
 
     sf::Window window(sf::VideoMode(1200, 900, 32), "First Window",
                       sf::Style::Titlebar | sf::Style::Close, settings);
-//    sf::Window window(sf::VideoMode(1920, 1080, 32), "First Window",
-//                      sf::Style::Fullscreen, settings);
 
     glewExperimental = GL_TRUE;
 
@@ -146,22 +144,22 @@ int main() {
     skybox_shader.set_int("skybox", 0);
 
     bool is_go = true;
+
+    ECS::InputManager inputManager;
+    inputManager.addEventListener(sf::Event::Closed, [&is_go](ECS::InputEvent event) {
+        is_go = false;
+    });
+    inputManager.addEventListener(sf::Event::MouseMoved, [&camera, &window](ECS::InputEvent event) {
+        camera.mouse_input(window, event.getMousePosition().first, event.getMousePosition().second);
+    });
+    inputManager.addEventListener(sf::Event::KeyPressed, [&camera](ECS::InputEvent event) {
+        camera.keyboard_input(event.getPressedKey());
+    });
+
     while (is_go) {
         sf::Event window_event{};
         while (window.pollEvent(window_event)) {
-            switch (window_event.type) {
-                case sf::Event::Closed:
-                    is_go = false;
-                    break;
-                case sf::Event::KeyPressed:
-                    camera.keyboard_input();
-                    break;
-                case sf::Event::MouseMoved:
-                    camera.mouse_input(window, (float) window_event.mouseMove.x, (float) window_event.mouseMove.y);
-                    break;
-                default:
-                    break;
-            }
+            inputManager.processEvent(window_event);
         }
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
