@@ -40,7 +40,8 @@ class Camera {
         Vector crossResult(Vector::cross_product(cameraFront, cameraUp));
         switch (key) {
             case sf::Keyboard::S:
-            case sf::Keyboard::W:cameraPosition += cameraFront * speed * (key == sf::Keyboard::S ? -1.f : 1.f);
+            case sf::Keyboard::W:
+                cameraPosition += cameraFront * speed * (key == sf::Keyboard::S ? -1.f : 1.f);
                 break;
             case sf::Keyboard::A:
             case sf::Keyboard::D:
