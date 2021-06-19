@@ -20,8 +20,9 @@ class InputEvent {
                     }
                 }
                 break;
-            case sf::Event::MouseMoved:mousePosition.first = event.mouseMove.x;
-                mousePosition.second = event.mouseMove.y;
+            case sf::Event::MouseMoved:
+                mousePosition.first = (float) event.mouseMove.x;
+                mousePosition.second = (float) event.mouseMove.y;
                 break;
             default:break;
         }
