@@ -45,6 +45,7 @@ unsigned int load_skybox(std::vector<std::string> faces) {
 }
 
 int main() {
+    ECS::Window window;
     glewExperimental = GL_TRUE;
 
     if (GLEW_OK != glewInit()) {
@@ -135,7 +136,6 @@ int main() {
     skybox_shader.use();
     skybox_shader.set_int("skybox", 0);
 
-    ECS::Window window;
     window.getInputManager().addEventListener(sf::Event::Closed, [&window](ECS::InputEvent event) {
         window.setActive(false);
     });
@@ -154,7 +154,7 @@ int main() {
 
         model_shader.use();
         Matrix projection(camera.get_projection_matrix());
-        Matrix view(camera.get_view_matrix());
+        Matrix view(camera.getViewMatrix());
         model_shader.set_mat4("projection", projection);
         model_shader.set_mat4("view", view);
 
@@ -176,7 +176,7 @@ int main() {
         glDepthFunc(GL_LEQUAL);
 
         skybox_shader.use();
-        Matrix view_skybox = camera.get_view_matrix_without_translation();
+        Matrix view_skybox = camera.getViewMatrixWithoutTranslation();
         skybox_shader.set_mat4("view", view_skybox);
         skybox_shader.set_mat4("projection", projection);
 
