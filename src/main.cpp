@@ -133,9 +133,9 @@ int main() {
     Shader model_shader(s5, s6);
     model_shader.use();
     stbi_set_flip_vertically_on_load(true);
-    Model model_obj_backpack("/home/gelia/Workspace/opengl/resources/models/backpack/backpack.obj");
-    Model model_obj_mars("/home/gelia/Workspace/opengl/resources/models/planet/planet.obj");
-    Model model_obj_cyborg("/home/gelia/Workspace/opengl/resources/models/cyborg/cyborg.obj");
+    Model model_obj_backpack("../resources/models/backpack/backpack.obj");
+    Model model_obj_mars("../resources/models/planet/planet.obj");
+    Model model_obj_cyborg("../resources/models/cyborg/cyborg.obj");
 
     std::string s7 = "../resources/shaders/skybox.vs";
     std::string s8 = "../resources/shaders/skybox.fs";
