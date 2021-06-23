@@ -88,7 +88,7 @@ namespace glm
 #			endif//GLM_SWIZZLE*/
 #		endif
 
-		// -- Component accesses --
+		// -- inprogress accesses --
 
 #		ifdef GLM_FORCE_SIZE_FUNC
 			/// Return the count of components of the vector

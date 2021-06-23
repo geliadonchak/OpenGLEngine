@@ -5,51 +5,28 @@
 //#include <GL/glew.h>
 //#include <SFML/Window.hpp>
 #include "../external/stb/stb_image.h"
-#include "utils/ShaderLoader.hpp"
 #include "Camera.hpp"
-#include "utils/Shader.hpp"
+#include "Shader.hpp"
 
-#include "ECS/InputManager.hpp"
-#include "ECS/WindowSettings.hpp"
-#include "ECS/Window.hpp"
+#include "ECS/InputSystem/InputManager.hpp"
+#include "ECS/Window/Window.hpp"
 
 #include "VertexArrayObject.hpp"
 #include "VertexBufferObject.hpp"
-#include "Mesh.hpp"
-#include "Model.hpp"
-
-unsigned int load_skybox(std::vector<std::string> faces) {
-    unsigned int texture_ID;
-    glGenTextures(1, &texture_ID);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, texture_ID);
-
-    int width, height, nr_channels;
-    for (unsigned int i = 0; i < faces.size(); i++) {
-        unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nr_channels, 0);
-        if (data) {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-            stbi_image_free(data);
-        } else {
-            std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
-            stbi_image_free(data);
-        }
-    }
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-    return texture_ID;
-}
+#include "ECS/Utils/Mesh.hpp"
+#include "ECS/Components/Model.hpp"
+#include "ECS/Components/Texture.hpp"
+#include "LightSource.hpp"
+#include "Utils/LightningShaderFiller.hpp"
+#include "Material.hpp"
+#include "ECS/Components/SkyboxTexture.hpp"
 
 int main() {
     ECS::Window window;
-    glewExperimental = GL_TRUE;
 
+    glewExperimental = GL_TRUE;
     if (GLEW_OK != glewInit()) {
-        std::cout << "Error:: glew not init =(" << std::endl;
+        std::cerr << "Error: glew not init =(" << std::endl;
         return -1;
     }
 
@@ -119,11 +96,11 @@ int main() {
             "../resources/skybox/front.jpg",
             "../resources/skybox/back.jpg"
     };
-    unsigned int skybox_texture = load_skybox(faces);
 
-    std::string s5 = "../resources/shaders/model.vs";
-    std::string s6 = "../resources/shaders/model.fs";
-    Shader model_shader(s5, s6);
+    SkyboxTexture skybox_texture;
+    skybox_texture.loadTexture(faces);
+
+    Shader model_shader("../resources/shaders/model.vs", "../resources/shaders/model.fs");
     model_shader.use();
     stbi_set_flip_vertically_on_load(true);
     Model model_obj_backpack("../resources/models/backpack/backpack.obj");
@@ -140,10 +117,10 @@ int main() {
         window.setActive(false);
     });
     window.getInputManager().addEventListener(sf::Event::MouseMoved, [&camera](ECS::InputEvent event) {
-        camera.mouse_input(event.getMousePosition().first, event.getMousePosition().second);
+      camera.onMouseInput(event.getMousePosition().first, event.getMousePosition().second);
     });
     window.getInputManager().addEventListener(sf::Event::KeyPressed, [&camera](ECS::InputEvent event) {
-        camera.keyboard_input(event.getPressedKey());
+      camera.onKeyboardInput(event.getPressedKey());
     });
 
     while (window.isActive()) {
@@ -153,7 +130,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         model_shader.use();
-        Matrix projection(camera.get_projection_matrix());
+        Matrix projection(camera.getProjectionMatrix());
         Matrix view(camera.getViewMatrix());
         model_shader.set_mat4("projection", projection);
         model_shader.set_mat4("view", view);
@@ -181,7 +158,7 @@ int main() {
         skybox_shader.set_mat4("projection", projection);
 
         skybox_VAO.bind_array();
-        glBindTexture(GL_TEXTURE_CUBE_MAP, skybox_texture);
+        skybox_texture.bind();
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glDepthFunc(GL_LESS);
 

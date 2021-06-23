@@ -93,7 +93,7 @@ namespace glm
 		: x(static_cast<T>(v.x))
 	{}
 
-	// -- Component accesses --
+	// -- inprogress accesses --
 
 #	ifdef GLM_FORCE_SIZE_FUNC
 		template <typename T, precision P>

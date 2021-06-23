@@ -7,19 +7,19 @@
 
 class LightSource {
 public:
-    enum light_caster_type {
+    enum lightCasterType {
         DIRECTIONAL,
         POINT,
         SPOT,
     };
 
-    explicit LightSource(light_caster_type _type) : type(_type) {}
+    explicit LightSource(lightCasterType _type) : type(_type) {}
 
-    LightSource *get_light_source() {
+    LightSource *getLightSource() {
         return this;
     }
 
-    light_caster_type get_type() const {
+    lightCasterType getYype() const {
         return type;
     };
 
@@ -123,7 +123,7 @@ public:
     }
 
 private:
-    light_caster_type type = DIRECTIONAL;
+    lightCasterType type = DIRECTIONAL;
 
     size_t point_index = 0;
 

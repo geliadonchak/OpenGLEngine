@@ -75,7 +75,7 @@ namespace glm
 
 		glm::tquat<T, P> real, dual;
 
-		// -- Component accesses --
+		// -- inprogress accesses --
 
 #		ifdef GLM_FORCE_SIZE_FUNC
 			typedef size_t size_type;

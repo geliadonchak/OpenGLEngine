@@ -8,7 +8,8 @@
 #include <string>
 #include "VertexArrayObject.hpp"
 #include "VertexBufferObject.hpp"
-#include "utils/Shader.hpp"
+#include "Shader.hpp"
+#include "ECS/Components/Texture.hpp"
 
 struct Vertex {
     glm::vec3 position;
@@ -18,20 +19,14 @@ struct Vertex {
     glm::vec3 bitangent;
 };
 
-struct Text {
-    unsigned int id;
-    std::string type;
-    std::string path;
-};
-
 class Mesh {
  public:
     std::vector<Vertex> vertices{};
     std::vector<unsigned int> indices{};
-    std::vector<Text> textures;
+    std::vector<Texture> textures;
     unsigned int VAO{};
 
-    Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, std::vector<Text>& textures) {
+    Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, std::vector<Texture>& textures) {
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
@@ -49,7 +44,7 @@ class Mesh {
             glActiveTexture(GL_TEXTURE0 + i);
 
             std::string number;
-            std::string name = textures[i].type;
+            std::string name = textures[i].getType();
 
             if (name == "texture_diffuse") {
                 number = std::to_string(diffuse_n++);
@@ -62,8 +57,8 @@ class Mesh {
                 number = std::to_string(height_n++);
             }
 
-            glUniform1i(glGetUniformLocation(shader.get_shader_id(), (name + number).c_str()), i);
-            glBindTexture(GL_TEXTURE_2D, textures[i].id);
+            glUniform1i(glGetUniformLocation(shader.getShaderId(), (name + number).c_str()), i);
+            glBindTexture(GL_TEXTURE_2D, textures[i].getTextureId());
 
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);

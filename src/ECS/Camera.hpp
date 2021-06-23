@@ -1,14 +1,15 @@
 #pragma once
 
-#ifndef OPENGLENGINE_CAMERA_HPP
-#define OPENGLENGINE_CAMERA_HPP
+#ifndef OPENGLENGINE_ECS_CAMERA_HPP
+#define OPENGLENGINE_ECS_CAMERA_HPP
 
 #include <limits>
-#include <SFML/Window.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Matrix.hpp"
+#include "Math/Matrix.hpp"
+
+namespace ECS {
 
 class Camera {
   public:
@@ -32,30 +33,28 @@ class Camera {
         return result;
     }
 
-    Matrix get_projection_matrix() {
+    Matrix getProjectionMatrix() {
         return Matrix::perspective(45.0f, 800.0f / 600.0f, 0.1f, 100.0f);
     }
 
-    void keyboard_input(sf::Keyboard::Key key) {
+    void onKeyboardInput(sf::Keyboard::Key key) {
         Vector crossResult(Vector::cross_product(cameraFront, cameraUp));
         switch (key) {
             case sf::Keyboard::S:
-            case sf::Keyboard::W:
-                cameraPosition += cameraFront * speed * (key == sf::Keyboard::S ? -1.f : 1.f);
+            case sf::Keyboard::W:cameraPosition += cameraFront * speed * (key == sf::Keyboard::S ? -1.f : 1.f);
                 break;
             case sf::Keyboard::A:
             case sf::Keyboard::D:
                 cameraPosition += crossResult.normalize() * speed * (key == sf::Keyboard::A ? -1.f : 1.f);
                 break;
             case sf::Keyboard::Q:
-            case sf::Keyboard::E:
-                rotate(key == sf::Keyboard::Q ? -1 : 1);
+            case sf::Keyboard::E:rotate(key == sf::Keyboard::Q ? -1 : 1);
                 break;
             default:break;
         }
     }
 
-    void mouse_input(float xPos, float yPos) {
+    void onMouseInput(float xPos, float yPos) {
         if (std::numeric_limits<float>::infinity() == lastX) {
             lastX = xPos;
             lastY = yPos;
@@ -97,10 +96,20 @@ class Camera {
         cameraFront = front.normalize();
     }
 
+    const Vector &getCameraPosition() const {
+        return cameraPosition;
+    }
+    const Vector &getCameraFront() const {
+        return cameraFront;
+    }
+    const Vector &getCameraUp() const {
+        return cameraUp;
+    }
+
   private:
-    Vector cameraPosition;
-    Vector cameraFront;
-    Vector cameraUp;
+    Vector cameraPosition{};
+    Vector cameraFront{};
+    Vector cameraUp{};
 
     float speed = 0.2;
 
@@ -114,4 +123,6 @@ class Camera {
     float lastY = std::numeric_limits<float>::infinity();
 };
 
-#endif  // OPENGLENGINE_CAMERA_HPP
+}
+
+#endif  // OPENGLENGINE_ECS_CAMERA_HPP

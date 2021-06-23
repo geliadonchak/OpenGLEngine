@@ -76,7 +76,7 @@ namespace glm
 
 		T x, y, z, w;
 
-		// -- Component accesses --
+		// -- inprogress accesses --
 
 #		ifdef GLM_FORCE_SIZE_FUNC
 			typedef size_t size_type;

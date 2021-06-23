@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef OPENGLENGINE_ECS_WINDOW_setTINGS_HPP
-#define OPENGLENGINE_ECS_WINDOW_setTINGS_HPP
+#ifndef OPENGLENGINE_ECS_WINDOW_SETTINGS_HPP
+#define OPENGLENGINE_ECS_WINDOW_SETTINGS_HPP
 
 #include <string>
 #include <SFML/Window/Window.hpp>

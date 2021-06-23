@@ -202,7 +202,7 @@ namespace glm
 		w(static_cast<T>(v.w))
 	{}
 
-	// -- Component accesses --
+	// -- inprogress accesses --
 
 #	ifdef GLM_FORCE_SIZE_FUNC
 		template <typename T, precision P>

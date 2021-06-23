@@ -1,12 +1,12 @@
 #pragma once
 
-#include <limits>
-
-#include "Shader.hpp"
-#include "../LightSource.hpp"
-
 #ifndef OPENGLENGINE_LIGHTNING_SHADER_FILLET_HPP
 #define OPENGLENGINE_LIGHTNING_SHADER_FILLET_HPP
+
+#include <limits>
+
+#include "../Shader.hpp"
+#include "../LightSource.hpp"
 
 struct LightningShaderFiller {
     static void fill_light_shader(Shader &light_shader, LightSource &light_source) {

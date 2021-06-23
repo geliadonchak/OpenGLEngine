@@ -7,7 +7,7 @@
 #include <utility>
 
 #include "WindowSettings.hpp"
-#include "InputManager.hpp"
+#include "../InputSystem/InputManager.hpp"
 
 namespace ECS {
 
