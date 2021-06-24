@@ -447,6 +447,47 @@ class Matrix {
         return x_matrix * y_matrix * z_matrix;
     }
 
+    static Matrix rotateX(const float &alpha) {
+        Matrix x_matrix = identity_matrix(4);
+
+        x_matrix[1][1] = std::cos(alpha);
+        x_matrix[1][2] = std::sin(alpha);
+        x_matrix[2][1] = -std::sin(alpha);
+        x_matrix[2][2] = std::cos(alpha);
+
+        return x_matrix;
+    }
+
+    static Matrix rotateY(const float &beta) {
+        Matrix y_matrix = identity_matrix(4);
+
+        y_matrix[0][0] = std::cos(beta);
+        y_matrix[0][2] = -std::sin(beta);
+        y_matrix[2][0] = std::sin(beta);
+        y_matrix[2][2] = std::cos(beta);
+
+        return  y_matrix;
+    }
+
+    static Matrix rotateZ(const float &gamma) {
+        Matrix z_matrix = identity_matrix(4);
+
+        z_matrix[0][0] = std::cos(gamma);
+        z_matrix[0][1] = std::sin(gamma);
+        z_matrix[1][0] = -std::sin(gamma);
+        z_matrix[1][1] = std::cos(gamma);
+
+        return  z_matrix;
+    }
+
+    static Matrix axonometric() {
+        Matrix x_matrix = rotateX(45.0f);
+        Matrix y_matrix = rotateY(32.26f);
+        Matrix ortho_matrix = Matrix{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+
+        return y_matrix * x_matrix * ortho_matrix;
+    }
+
     static Matrix look_at(const Vector &from, const Vector &to, const Vector &world_up) {
         Matrix matrix = identity_matrix(4);
         Vector forward((to - from).normalize());

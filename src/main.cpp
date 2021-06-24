@@ -174,17 +174,17 @@ int main() {
         model_shader.set_mat4("view", view);
 
 
-        Matrix model_backpack = Matrix::transform(Vector{0.0f, 0.0f, 0.0f}) * Matrix::scale(Vector{0.6f, 0.6f, 0.6f});
+        Matrix model_backpack = Matrix::transform(Vector{0.0f, 0.0f, 0.0f}) * Matrix::scale(Vector{0.6f, 0.6f, 0.6f}) * Matrix::axonometric();
         model_shader.set_mat4("model", model_backpack);
         model_obj_backpack.draw(model_shader);
 
 
-        Matrix model_mars = Matrix::transform(Vector{5.0f, 3.0f, 5.0f}) * Matrix::scale(Vector{0.9f, 0.9f, 0.9f});
+        Matrix model_mars = Matrix::transform(Vector{5.0f, 3.0f, 5.0f}) * Matrix::scale(Vector{0.9f, 0.9f, 0.9f}) * Matrix::axonometric();
         model_shader.set_mat4("model", model_mars);
         model_obj_mars.draw(model_shader);
 
 
-        Matrix model_cyborg = Matrix::transform(Vector{-5.0f, -3.0f, 0.0f}) * Matrix::scale(Vector{0.9f, 0.9f, 0.9f});
+        Matrix model_cyborg = Matrix::transform(Vector{-5.0f, -3.0f, 0.0f}) * Matrix::scale(Vector{0.9f, 0.9f, 0.9f}) * Matrix::axonometric();
         model_shader.set_mat4("model", model_cyborg);
         model_obj_cyborg.draw(model_shader);
 
