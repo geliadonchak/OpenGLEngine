@@ -18,6 +18,16 @@
 #include "VertexArrayObject.hpp"
 #include "VertexBufferObject.hpp"
 
+float calc_x_offset(int idx, Texture& tex) {
+    int column = idx % (int)tex.get_rows_number();
+    return (float)column / (float)tex.get_rows_number();
+};
+
+float calc_y_offset(int idx, Texture& tex) {
+    int row = idx / (int)tex.get_rows_number();
+    return (float)row / (float)tex.get_rows_number();
+};
+
 int main() {
     sf::ContextSettings settings;
     settings.depthBits = 24;
@@ -128,8 +138,8 @@ int main() {
     VertexArrayObject::link_vertex_attr(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) nullptr);
     VBO.bind_buffer();
 
-    Texture("../resources/images/sad_cat.jpg").bind();
-
+    Texture tex = Texture("../resources/images/atlas.jpg").set_rows_number(3);
+    tex.bind();
 
     lighting_shader.use();
     Material material(0, 1, 32.0f);
@@ -208,7 +218,7 @@ int main() {
         lighting_shader.set_mat4("model", model);
 
         cube_VAO.bind_array();
-        for (unsigned int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             model = Matrix::transform(cubes_positions[i]).transposed();
             float angle = 20.0f * (float) i;
 
@@ -216,6 +226,9 @@ int main() {
                                     glm::radians(angle - (float) i));
 
             lighting_shader.set_mat4("model", model);
+            lighting_shader.set_float("rows_number", tex.get_rows_number());
+
+            lighting_shader.set_vec2("offset", calc_x_offset(i % 9, tex), calc_y_offset(i % 9, tex));
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }

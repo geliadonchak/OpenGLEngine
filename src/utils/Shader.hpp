@@ -28,6 +28,10 @@ class Shader {
         glUniform3f(glGetUniformLocation(shader_id, &name[0]), x, y, z);
     }
 
+    void set_vec2(const std::string& name, float x, float y) const {
+        glUniform2f(glGetUniformLocation(shader_id, &name[0]), x, y);
+    }
+
     void set_float(const std::string& name, float value) const {
         glUniform1f(glGetUniformLocation(shader_id, &name[0]), value);
     }

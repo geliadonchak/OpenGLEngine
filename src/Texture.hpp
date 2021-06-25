@@ -53,10 +53,21 @@ class Texture {
 
     unsigned int get_texture_id() const {
         return texture_id;
-    }
+    };
+
+    float get_rows_number() const {
+        return rows_number;
+    };
+
+    Texture set_rows_number(float num) {
+        rows_number = num;
+
+        return *this;
+    };
 
  private:
     unsigned int texture_id = -1;
+    float rows_number = 1.f;
 };
 
 #endif  // OPENGLENGINE_TEXTURE_HPP
