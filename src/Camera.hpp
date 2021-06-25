@@ -31,6 +31,16 @@ class Camera {
         return result;
     }
 
+    void rotate(int direction) {
+        yaw_correction += (float) direction * rotation_speed;
+
+        Vector front(3);
+        front[0] = static_cast<float>(cos(glm::radians(yaw_correction + yaw)) * cos(glm::radians(pitch)));
+        front[1] = static_cast<float>(sin(glm::radians(pitch)));
+        front[2] = static_cast<float>(sin(glm::radians(yaw_correction + yaw)) * cos(glm::radians(pitch)));
+        camera_front = front.normalize();
+    }
+
     Matrix get_projection_matrix() {
         return Matrix::perspective(45.0f, 800.0f / 600.0f, 0.1f, 100.0f);
     }
@@ -52,6 +62,14 @@ class Camera {
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
             camera_position -= camera_front * speed;
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+            rotate(-1);
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+            rotate(1);
         }
     }
 
@@ -110,6 +128,9 @@ class Camera {
     float yaw = -90.0;
     float pitch = 0.0;
     bool firstMouse = true;
+
+    float rotation_speed = 1.0;
+    float yaw_correction = 0.0;
 
     float last_x;
     float last_y;

@@ -7,7 +7,7 @@
 
 class Shader {
  public:
-    Shader(std::string &vertex_path, std::string &fragment_path) {
+    Shader(std::string vertex_path, std::string fragment_path) {
         shader_id = LoadShaders(vertex_path, fragment_path);
     }
 
@@ -33,7 +33,7 @@ class Shader {
     }
 
     void set_int(const std::string& name, int value) const {
-        glUniform1f(glGetUniformLocation(shader_id, &name[0]), value);
+        glUniform1i(glGetUniformLocation(shader_id, &name[0]), value);
     }
 
     GLuint get_shader_id() const {
